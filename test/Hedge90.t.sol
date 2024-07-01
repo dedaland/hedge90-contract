@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract MockERC20 is ERC20 {
     constructor() ERC20("Mock Token", "MTK") {
-        _mint(msg.sender, 1000000 * 10**decimals());
+        _mint(msg.sender, 1000000 * 10 ** decimals());
     }
 
     function mint(address to, uint256 amount) external {
@@ -51,16 +51,11 @@ contract TokenSaleTest is Test {
         withdrawalAddress = address(0x456);
         buyer = address(0x789);
 
-        tokenSale = new TokenSale(
-            address(token),
-            address(usdt),
-            teamWallet,
-            withdrawalAddress,
-            address(tokenPriceManager)
-        );
+        tokenSale =
+            new TokenSale(address(token), address(usdt), teamWallet, withdrawalAddress, address(tokenPriceManager));
 
-        token.mint(address(tokenSale), 1000000 * 10**token.decimals());
-        usdt.mint(buyer, 100000 * 10**usdt.decimals());
+        token.mint(address(tokenSale), 1000000 * 10 ** token.decimals());
+        usdt.mint(buyer, 100000 * 10 ** usdt.decimals());
         vm.startPrank(buyer);
         usdt.approve(address(tokenSale), type(uint256).max);
         token.approve(address(tokenSale), type(uint256).max);
@@ -70,7 +65,7 @@ contract TokenSaleTest is Test {
     function testBuyTokens() public {
         uint256 amountToBuy = 5000000000; // 50 tokens
         uint256 tokenPrice = tokenPriceManager.getTokenPrice();
-        uint256 baseCost = (tokenPrice * amountToBuy) / (10**tokenSale.tokenPriceDecimal());
+        uint256 baseCost = (tokenPrice * amountToBuy) / (10 ** tokenSale.tokenPriceDecimal());
         uint256 extraFee = (baseCost * 4) / 100;
         uint256 teamWalletShare = (baseCost * 10) / 100;
         uint256 user90HedgeShare = baseCost - teamWalletShare;
@@ -98,7 +93,7 @@ contract TokenSaleTest is Test {
     function testReturnTokens() public {
         uint256 amountToBuy = 5000000000; // 50 tokens
         uint256 tokenPrice = tokenPriceManager.getTokenPrice();
-        uint256 baseCost = (tokenPrice * amountToBuy) / (10**tokenSale.tokenPriceDecimal());
+        uint256 baseCost = (tokenPrice * amountToBuy) / (10 ** tokenSale.tokenPriceDecimal());
         uint256 extraFee = (baseCost * 4) / 100;
         uint256 teamWalletShare = (baseCost * 10) / 100;
         uint256 user90HedgeShare = baseCost - teamWalletShare;
@@ -146,7 +141,7 @@ contract TokenSaleTest is Test {
     function testReentrancyAttack() public {
         uint256 amountToBuy = 5000000000; // 50 tokens
         uint256 tokenPrice = tokenPriceManager.getTokenPrice();
-        uint256 baseCost = (tokenPrice * amountToBuy) / (10**tokenSale.tokenPriceDecimal());
+        uint256 baseCost = (tokenPrice * amountToBuy) / (10 ** tokenSale.tokenPriceDecimal());
         uint256 extraFee = (baseCost * 4) / 100;
         uint256 teamWalletShare = (baseCost * 10) / 100;
         uint256 user90HedgeShare = baseCost - teamWalletShare;
@@ -158,11 +153,7 @@ contract TokenSaleTest is Test {
         vm.stopPrank();
 
         // Deploy reentrancy attack contract
-        ReentrancyAttack attackContract = new ReentrancyAttack(
-            address(tokenSale),
-            address(token),
-            address(usdt)
-        );
+        ReentrancyAttack attackContract = new ReentrancyAttack(address(tokenSale), address(token), address(usdt));
 
         // Transfer tokens to attack contract
         vm.prank(buyer);
@@ -172,9 +163,9 @@ contract TokenSaleTest is Test {
 
         // Attempt reentrancy attack
         vm.startPrank(buyer);
-//        vm.expectRevert("ReentrancyGuard: reentrant call");
+        //        vm.expectRevert("ReentrancyGuard: reentrant call");
         vm.expectRevert();
         attackContract.attack(amountToReturn, 0);
         vm.stopPrank();
-}
+    }
 }

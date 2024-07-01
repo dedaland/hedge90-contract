@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 /**
- *Submitted for verification at BscScan.com on 2024-03-02
-*/
+ * Submitted for verification at BscScan.com on 2024-03-02
+ */
 
 // File: @openzeppelin/contracts/utils/Nonces.sol
-
 
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/Nonces.sol)
 pragma solidity ^0.8.20;
@@ -54,7 +53,6 @@ abstract contract Nonces {
 
 // File: @openzeppelin/contracts/interfaces/IERC5267.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC5267.sol)
 
 pragma solidity ^0.8.20;
@@ -84,7 +82,6 @@ interface IERC5267 {
 }
 
 // File: @openzeppelin/contracts/utils/StorageSlot.sol
-
 
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/StorageSlot.sol)
 // This file was procedurally generated from scripts/generate/templates/StorageSlot.js.
@@ -223,11 +220,9 @@ library StorageSlot {
 
 // File: @openzeppelin/contracts/utils/ShortStrings.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/ShortStrings.sol)
 
 pragma solidity ^0.8.20;
-
 
 // | string  | 0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA   |
 // | length  | 0x                                                              BB |
@@ -348,7 +343,6 @@ library ShortStrings {
 
 // File: @openzeppelin/contracts/utils/math/SignedMath.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/math/SignedMath.sol)
 
 pragma solidity ^0.8.20;
@@ -394,7 +388,6 @@ library SignedMath {
 
 // File: @openzeppelin/contracts/utils/math/Math.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/math/Math.sol)
 
 pragma solidity ^0.8.20;
@@ -413,6 +406,7 @@ library Math {
         Ceil, // Toward positive infinity
         Trunc, // Toward zero
         Expand // Away from zero
+
     }
 
     /**
@@ -812,12 +806,9 @@ library Math {
 
 // File: @openzeppelin/contracts/utils/Strings.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/Strings.sol)
 
 pragma solidity ^0.8.20;
-
-
 
 /**
  * @dev String operations.
@@ -908,11 +899,9 @@ library Strings {
 
 // File: @openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/cryptography/MessageHashUtils.sol)
 
 pragma solidity ^0.8.20;
-
 
 /**
  * @dev Signature message hash utilities for producing digests to be consumed by {ECDSA} recovery or signing.
@@ -970,7 +959,7 @@ library MessageHashUtils {
      * See {ECDSA-recover}.
      */
     function toDataWithIntendedValidatorHash(address validator, bytes memory data) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked(hex"19_00", validator, data));
+        return keccak256(abi.encodePacked(hex"1900", validator, data));
     }
 
     /**
@@ -986,7 +975,7 @@ library MessageHashUtils {
         /// @solidity memory-safe-assembly
         assembly {
             let ptr := mload(0x40)
-            mstore(ptr, hex"19_01")
+            mstore(ptr, hex"1901")
             mstore(add(ptr, 0x02), domainSeparator)
             mstore(add(ptr, 0x22), structHash)
             digest := keccak256(ptr, 0x42)
@@ -996,13 +985,9 @@ library MessageHashUtils {
 
 // File: @openzeppelin/contracts/utils/cryptography/EIP712.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/cryptography/EIP712.sol)
 
 pragma solidity ^0.8.20;
-
-
-
 
 /**
  * @dev https://eips.ethereum.org/EIPS/eip-712[EIP 712] is a standard for hashing and signing of typed structured data.
@@ -1158,7 +1143,6 @@ abstract contract EIP712 is IERC5267 {
 
 // File: @openzeppelin/contracts/utils/cryptography/ECDSA.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/cryptography/ECDSA.sol)
 
 pragma solidity ^0.8.20;
@@ -1279,12 +1263,11 @@ library ECDSA {
      * @dev Overload of {ECDSA-tryRecover} that receives the `v`,
      * `r` and `s` signature fields separately.
      */
-    function tryRecover(
-        bytes32 hash,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) internal pure returns (address, RecoverError, bytes32) {
+    function tryRecover(bytes32 hash, uint8 v, bytes32 r, bytes32 s)
+        internal
+        pure
+        returns (address, RecoverError, bytes32)
+    {
         // EIP-2 still allows signature malleability for ecrecover(). Remove this possibility and make the signature
         // unique. Appendix F in the Ethereum Yellow paper (https://ethereum.github.io/yellowpaper/paper.pdf), defines
         // the valid range for s in (301): 0 < s < secp256k1n ÷ 2 + 1, and for v in (302): v ∈ {27, 28}. Most
@@ -1334,7 +1317,6 @@ library ECDSA {
 }
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol
-
 
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/extensions/IERC20Permit.sol)
 
@@ -1400,15 +1382,8 @@ interface IERC20Permit {
      *
      * CAUTION: See Security Considerations above.
      */
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) external;
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
+        external;
 
     /**
      * @dev Returns the current nonce for `owner`. This value must be
@@ -1427,7 +1402,6 @@ interface IERC20Permit {
 }
 
 // File: @openzeppelin/contracts/interfaces/draft-IERC6093.sol
-
 
 // OpenZeppelin Contracts (last updated v5.0.0) (interfaces/draft-IERC6093.sol)
 pragma solidity ^0.8.20;
@@ -1592,7 +1566,6 @@ interface IERC1155Errors {
 
 // File: @openzeppelin/contracts/utils/Context.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)
 
 pragma solidity ^0.8.20;
@@ -1622,7 +1595,6 @@ abstract contract Context {
 }
 
 // File: @openzeppelin/contracts/token/ERC20/IERC20.sol
-
 
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)
 
@@ -1705,11 +1677,9 @@ interface IERC20 {
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/extensions/IERC20Metadata.sol)
 
 pragma solidity ^0.8.20;
-
 
 /**
  * @dev Interface for the optional metadata functions from the ERC20 standard.
@@ -1733,14 +1703,9 @@ interface IERC20Metadata is IERC20 {
 
 // File: @openzeppelin/contracts/token/ERC20/ERC20.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.20;
-
-
-
-
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -2051,15 +2016,9 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol
 
-
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/extensions/ERC20Permit.sol)
 
 pragma solidity ^0.8.20;
-
-
-
-
-
 
 /**
  * @dev Implementation of the ERC20 Permit extension allowing approvals to be made via signatures, as defined in
@@ -2093,15 +2052,10 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712, Nonces {
     /**
      * @inheritdoc IERC20Permit
      */
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) public virtual {
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
+        public
+        virtual
+    {
         if (block.timestamp > deadline) {
             revert ERC2612ExpiredSignature(deadline);
         }
@@ -2136,21 +2090,17 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712, Nonces {
 
 // File: contracts/DedaCoin.sol
 
-
 pragma solidity ^0.8.20;
-
-
 
 /// @custom:security-contact security@dedaland.co
 contract DedaCoin is ERC20, ERC20Permit {
-    constructor(
-        string memory name,
-        string memory symbol,
-        address[] memory holders,
-        uint256[] memory shares
-    ) ERC20(name, symbol) ERC20Permit(name) {
-        for (uint256 i = 0; i < holders.length; i++)
-            _mint(holders[i], shares[i] * 10**decimals());
+    constructor(string memory name, string memory symbol, address[] memory holders, uint256[] memory shares)
+        ERC20(name, symbol)
+        ERC20Permit(name)
+    {
+        for (uint256 i = 0; i < holders.length; i++) {
+            _mint(holders[i], shares[i] * 10 ** decimals());
+        }
     }
 
     function decimals() public pure override returns (uint8) {

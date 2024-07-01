@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.8.24;
+
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import { TokenPriceManager } from "./TokenPriceManager.sol";
+import {TokenPriceManager} from "./TokenPriceManager.sol";
 
 contract TokenSale is ReentrancyGuard {
     using SafeERC20 for IERC20;
@@ -50,28 +51,29 @@ contract TokenSale is ReentrancyGuard {
     }
 
     function buyTokens(uint256 USDTAmount) external nonReentrant {
-        require(USDTAmount >= 5000000000, "Minimum purchase is 50 USDT");
+        require(USDTAmount >= 5_000_000_000_000_000_000, "Minimum purchase is 50 USDT");
 
         uint256 tokenPrice = tokenPriceManager.getTokenPrice();
-        uint256 amount = (USDTAmount * (10 ** tokenPriceDecimal)) / tokenPrice;
-        uint256 baseCost = (tokenPrice * amount) / (10 ** tokenPriceDecimal);
-        uint256 extraFee = (baseCost * 4) / 100;
-        uint256 teamWalletShare = (baseCost * 10) / 100;
-        uint256 user90HedgeShare = baseCost - teamWalletShare;
+        uint256 amount = (USDTAmount * (10 ** tokenPriceDecimal)) / tokenPrice; // token amount
+//        uint256 baseCost = (tokenPrice * amount) / (10 ** tokenPriceDecimal);
+        uint256 finalAmount = amount - ((amount * 4) / 100);
+        uint256 extraFee = (amount * 4) / 100; // fee for team
+        uint256 teamWalletShare = (amount * 10) / 100;
+        uint256 user90HedgeShare = amount - teamWalletShare;
 
-        uint256 totalCostWithFee = user90HedgeShare + teamWalletShare + extraFee;
+        uint256 totalCostWithFee = user90HedgeShare + teamWalletShare;
 
         require(USDT.balanceOf(msg.sender) >= totalCostWithFee, "Insufficient USDT balance");
         require(USDT.allowance(msg.sender, address(this)) >= totalCostWithFee, "USDT allowance too low");
         require(token.balanceOf(address(this)) >= amount, "Insufficient contract token balance");
 
-        USDT.safeTransferFrom(msg.sender, address(this), totalCostWithFee);
+        USDT.safeTransferFrom(msg.sender, address(this), amount);
 
-        purchases[msg.sender].push(Purchase(amount, tokenPrice, user90HedgeShare));
+        purchases[msg.sender].push(Purchase(finalAmount, tokenPrice, user90HedgeShare));
 
         USDT.safeTransfer(teamWallet, teamWalletShare + extraFee);
 
-        token.safeTransfer(msg.sender, amount);
+        token.safeTransfer(msg.sender, finalAmount);
 
     }
 
@@ -91,7 +93,6 @@ contract TokenSale is ReentrancyGuard {
 
         purchases[msg.sender][_index].amount -= amount;
         purchases[msg.sender][_index].USDTAmount -= refundAmount;
-
     }
 
     function cancelHedge90(uint256 _index) external nonReentrant {
@@ -101,7 +102,6 @@ contract TokenSale is ReentrancyGuard {
         Purchase memory purchase = purchases[msg.sender][_index];
         uint256 userLockedAmount = purchase.USDTAmount;
         require(USDT.balanceOf(address(this)) >= userLockedAmount, "Insufficient USDT balance in contract");
-
 
         // Calculate 85% of the locked amount(90% is user's) to transfer to the team wallet
         uint256 teamWalletAmount = (userLockedAmount * 85 * 100) / 90 / 100;
@@ -117,7 +117,6 @@ contract TokenSale is ReentrancyGuard {
 
         // Transfer 5% back to the user
         USDT.safeTransfer(msg.sender, userRefundAmount);
-
     }
 
     function withdrawTokens(uint256 amount) external onlyOwner nonReentrant {

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.8.24;
+
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol"; // changed from "@openzeppelin/contracts/security/ReentrancyGuard.sol", in latest versions
-import { TokenPriceManager } from "./TokenPriceManager.sol";  // Import the TokenPriceManager contract
+import {TokenPriceManager} from "./TokenPriceManager.sol"; // Import the TokenPriceManager contract
 
 contract TokenSale is ReentrancyGuard {
     using SafeERC20 for IERC20;
