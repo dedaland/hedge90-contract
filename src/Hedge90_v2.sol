@@ -54,27 +54,24 @@ contract TokenSale is ReentrancyGuard {
         require(USDTAmount >= 5_000_000_000_000_000_000, "Minimum purchase is 50 USDT");
 
         uint256 tokenPrice = tokenPriceManager.getTokenPrice();
-        uint256 amount = (USDTAmount * (10 ** tokenPriceDecimal)) / tokenPrice; // token amount
-//        uint256 baseCost = (tokenPrice * amount) / (10 ** tokenPriceDecimal);
-        uint256 finalAmount = amount - ((amount * 4) / 100);
-        uint256 extraFee = (amount * 4) / 100; // fee for team
-        uint256 teamWalletShare = (amount * 10) / 100;
-        uint256 user90HedgeShare = amount - teamWalletShare;
+        uint256 tokenAmount = (USDTAmount * (10 ** tokenPriceDecimal)) / tokenPrice; // token amount without fee
 
-        uint256 totalCostWithFee = user90HedgeShare + teamWalletShare;
+        uint256 extraFee = (tokenAmount * 4) / 100; // 4% fee in tokens
+        uint256 finalAmount = tokenAmount - extraFee; // amount after deducting 4% fee
 
-        require(USDT.balanceOf(msg.sender) >= totalCostWithFee, "Insufficient USDT balance");
-        require(USDT.allowance(msg.sender, address(this)) >= totalCostWithFee, "USDT allowance too low");
-        require(token.balanceOf(address(this)) >= amount, "Insufficient contract token balance");
+        uint256 teamWalletShare = (USDTAmount * 14) / 100; // 14% of USDTAmount (10% + 4%)
+        uint256 userNetUSDT = USDTAmount - teamWalletShare; // remaining 86% for user's token purchase
 
-        USDT.safeTransferFrom(msg.sender, address(this), amount);
+        require(USDT.balanceOf(msg.sender) >= USDTAmount, "Insufficient USDT balance");
+        require(USDT.allowance(msg.sender, address(this)) >= USDTAmount, "USDT allowance too low");
+        require(token.balanceOf(address(this)) >= finalAmount, "Insufficient contract token balance");
 
-        purchases[msg.sender].push(Purchase(finalAmount, tokenPrice, user90HedgeShare));
+        USDT.safeTransferFrom(msg.sender, address(this), USDTAmount);
+        USDT.safeTransfer(teamWallet, teamWalletShare);
 
-        USDT.safeTransfer(teamWallet, teamWalletShare + extraFee);
+        purchases[msg.sender].push(Purchase(finalAmount, tokenPrice, userNetUSDT));
 
         token.safeTransfer(msg.sender, finalAmount);
-
     }
 
     function returnTokens(uint256 amount, uint256 _index) external nonReentrant {

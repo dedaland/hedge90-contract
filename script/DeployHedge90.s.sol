@@ -15,7 +15,7 @@ contract DeployHedge90 is Script {
         address[] memory holders = new address[](1);
         holders[0] = DummyACC0;
         uint256[] memory shares = new uint256[](1);
-        shares[0] = 100_000_000_000_000;
+        shares[0] = 1_000;
         vm.startBroadcast();
         TokenPriceManager tokenpricemanager = new TokenPriceManager(85_000_000_000_000_000_0);
         MyUSDT usdt = new MyUSDT();
