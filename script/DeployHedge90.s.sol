@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
-import {TokenSale} from "../src/Hedge90_v2.sol";
+import {TokenSale} from "../src/Hedge90_v3.sol";
 import {MyUSDT} from "../src/DummyUSDT.sol";
 import {DedaCoin} from "../src/DummyDeDa.sol";
 import {TokenPriceManager} from "../src/TokenPriceManager.sol";
