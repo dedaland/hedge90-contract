@@ -18,8 +18,8 @@ contract TokenSale is ReentrancyGuard {
     address public teamWallet;
     address public withdrawalAddress;
 
-    uint256 public buyerDiscountPercent = 5; // 5% discount for the buyer
-    uint256 public referralPercent = 3; // 3% referral reward
+    uint256 public buyerDiscountPercent = 1; // 5% discount for the buyer
+    uint256 public referralPercent = 2; // 3% referral reward
 
     struct Purchase {
         uint256 amount;
@@ -66,8 +66,10 @@ contract TokenSale is ReentrancyGuard {
 
         uint256 buyerDiscount = (tokenAmount * buyerDiscountPercent) / 100;
         uint256 finalAmount = tokenAmount + buyerDiscount;
-
-        uint256 referralAmount = (USDTAmount * referralPercent) / 100;
+        uint256 referralAmount = 0;
+        if (inviter != address(0)) {
+            referralAmount = (USDTAmount * referralPercent) / 100;
+        }
 
         require(USDT.balanceOf(msg.sender) >= USDTAmount, "Insufficient USDT balance");
         require(USDT.allowance(msg.sender, address(this)) >= USDTAmount, "USDT allowance too low");
@@ -85,13 +87,15 @@ contract TokenSale is ReentrancyGuard {
         token.safeTransfer(msg.sender, finalAmount);
     }
 
-    function buyTokens(uint256 USDTAmount) external nonReentrant {
+    function buyTokens(uint256 USDTAmount, address inviter) external nonReentrant {
         require(USDTAmount >= 5_000_000_000_000_000_000, "Minimum purchase is 50 USDT");
 
         uint256 tokenPrice = tokenPriceManager.getTokenPrice();
         uint256 tokenAmount = (USDTAmount * (10 ** tokenPriceDecimal)) / tokenPrice;
-
-        uint256 extraFee = (tokenAmount * 4) / 100; // 4% fee in tokens
+        uint256 extraFee = (tokenAmount * 4) / 100;
+        if (inviter != address(0)) {
+            extraFee = (tokenAmount * (4 - buyerDiscountPercent)) / 100; // 4% fee in tokens
+        }
         uint256 finalAmount = tokenAmount - extraFee; // amount after deducting 4% fee
 
         uint256 teamWalletShare = (USDTAmount * 14) / 100; // 14% of USDTAmount (10% + 4%)
@@ -102,8 +106,14 @@ contract TokenSale is ReentrancyGuard {
         require(token.balanceOf(address(this)) >= finalAmount, "Insufficient contract token balance");
 
         USDT.safeTransferFrom(msg.sender, address(this), USDTAmount);
-        USDT.safeTransfer(teamWallet, teamWalletShare);
-
+        uint256 referralAmount = 0;
+        if(inviter != address(0)) {
+            referralAmount = (USDTAmount * referralPercent) / 100;
+        }
+        USDT.safeTransfer(teamWallet, teamWalletShare - referralAmount);
+        if(inviter != address(0)) {
+            USDT.safeTransfer(inviter, referralAmount);
+        }
         purchases[msg.sender].push(Purchase(finalAmount, tokenPrice, userNetUSDT));
 
         token.safeTransfer(msg.sender, finalAmount);
