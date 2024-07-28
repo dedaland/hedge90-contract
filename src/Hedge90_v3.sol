@@ -161,14 +161,14 @@ contract TokenSale is ReentrancyGuard {
         USDT.safeTransfer(msg.sender, userRefundAmount);
     }
 
-    function addInfluencer(address _addr, string memory _name) public {
+    function addInfluencer(address _addr, string memory _name) public onlyOwner{
         require(_addr != address(0), "Influencer address cannot be the zero address");
         require(bytes(_name).length > 0, "Influencer name cannot be empty");
         influencers[_addr] = Influencer(_name, true);
     }
 
     // Function to remove (disable) an influencer
-    function removeInfluencer(address _addr) public {
+    function removeInfluencer(address _addr) public onlyOwner{
         require(_addr != address(0), "Influencer address cannot be the zero address");
         require(bytes(influencers[_addr].name).length > 0, "Influencer does not exist");
 
