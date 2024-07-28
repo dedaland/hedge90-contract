@@ -29,6 +29,14 @@ contract TokenSale is ReentrancyGuard {
 
     mapping(address => Purchase[]) public purchases;
 
+    struct Influencer {
+        string name;
+        bool isActive;
+    }
+
+    // Mapping to store influencers
+    mapping(address => Influencer) public influencers;
+
     constructor(
         address _token,
         address _USDT,
@@ -151,6 +159,25 @@ contract TokenSale is ReentrancyGuard {
 
         USDT.safeTransfer(teamWallet, teamWalletAmount);
         USDT.safeTransfer(msg.sender, userRefundAmount);
+    }
+
+    function addInfluencer(address _addr, string memory _name) public {
+        require(_addr != address(0), "Influencer address cannot be the zero address");
+        require(bytes(_name).length > 0, "Influencer name cannot be empty");
+        influencers[_addr] = Influencer(_name, true);
+    }
+
+    // Function to remove (disable) an influencer
+    function removeInfluencer(address _addr) public {
+        require(_addr != address(0), "Influencer address cannot be the zero address");
+        require(bytes(influencers[_addr].name).length > 0, "Influencer does not exist");
+
+        influencers[_addr].isActive = false;
+    }
+
+    // Function to check if an address is an active influencer
+    function isInfluencer(address _addr) public view returns (bool) {
+        return influencers[_addr].isActive;
     }
 
     function withdrawTokens(uint256 amount) external onlyOwner nonReentrant {
