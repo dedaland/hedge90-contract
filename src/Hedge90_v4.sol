@@ -107,14 +107,12 @@ contract TokenSale is ReentrancyGuard {
 
         if (inviter != address(0)) {
             USDT.safeTransfer(inviter, referralAmount);
-        } else {
-            USDT.safeTransfer(teamWallet, referralAmount); // If no inviter, send referral amount to team wallet
         }
 
         token.safeTransfer(msg.sender, finalAmount);
     }
 
-    function buyTokens(uint256 USDTAmount, address inviter) external nonReentrant {
+    function buyTokens(uint256 USDTAmount, address inviter) external nonReentrant whenHedge90NotLocked{
         require(USDTAmount >= 5_000_000_000_000_000_000, "Minimum purchase is 50 USDT");
         require(inviter == address(0) || isInfluencer(inviter), "Inviter must be an active influencer");
 
@@ -147,7 +145,7 @@ contract TokenSale is ReentrancyGuard {
         token.safeTransfer(msg.sender, finalAmount);
     }
 
-    function returnTokens(uint256 amount, uint256 _index) external nonReentrant {
+    function returnTokens(uint256 amount, uint256 _index) external nonReentrant whenHedge90NotLocked{
         require(token.balanceOf(msg.sender) >= amount, "Insufficient TOKEN balance");
         require(token.allowance(msg.sender, address(this)) >= amount, "TOKEN allowance too low");
         Purchase memory purchase = purchases[msg.sender][_index];
